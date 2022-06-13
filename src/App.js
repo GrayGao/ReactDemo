@@ -1,94 +1,67 @@
-import './app.css'
-// 一、JSX中使用js表达式
-// 1、识别常规的变量
-const name = '我是APP'
-// 2、原生js方法调用
-const getAge = () => {
-  return 18
+import React from "react"
+// 组件：把一个一个的小功能抽离封装起来，然后像搭积木一样把它们连接起来，最后形成大的应用。
+// 为什么有组件呢？
+// 两个层面考虑
+// 1、组件化开发模式更加利于复用，2、可维护性。
+
+// React提供了两种组件风格。
+// 一种叫做函数组件，一种叫做类组件
+
+// 一、函数组件的创建和渲染
+// 创建
+function Hello () {
+  const clickHandler = (e) => {
+    //阻止默认行为
+    e.preventDefault()
+    console.log('函数组件中的事件被触发了', e)
+  }
+  return <div onClick={clickHandler}><a href="http://www.baidu.com">百度</a></div>
 }
-// 3、三元运算符(常用)
-const flag = true
-// 特别注意
-// if语句/switch-case语句/变量声明语句，这些叫做语句，不是表达式，不能出现在{}中
+// 渲染 <Hello/> <Hello></Hello>
+// 约定说明
+// 1、组件的名称必须首字母大写，react内部会根据这个来判断是组件还是普通的HTML标签
+// 2、函数组件必须有返回值，表示该组件的UI结构；如果不需要渲染任何内容，则返回null
+// 3、组件就像HTML标签一样可以被渲染到页面中。组件表示的是一段结构内容，对于函数组件来说，
+// 渲染的内容是函数的返回值就是对应的内容。
+// 4、使用函数名称作为组件标签名称，可以成对出现也可以自闭合。
 
-// 二、JSX列表渲染
-// react如何完成列表渲染?
-// 技术方案:map 重复渲染的是哪个模板 就return谁
-// 注意事项：遍历列表时同样需要一个类型为number/string不能重复的key，提高diff性能
-// key仅仅在内部使用，不会出现在真是的dom结构中
-
-const songs = [
-  { id: 1, name: '痴心绝对' },
-  { id: 2, name: '像我这样的人' },
-  { id: 3, name: '南山南' }
-]
-
-// 三、条件渲染
-// 技术方案: 一种三元表达式(常用)，一种逻辑&&运算符
-// 1.三元表达式 - 满足条件才渲染一个span标签
-const flag2 = true 
-// 2.&&
-
-// 四、原则：模板中的逻辑尽量保持精简
-// 复杂的多分支的逻辑 收敛为一个函数 通过一个专门的函数来写分支逻辑 模板中只负责调用函数即可
-const getHtag = (type) =>{
-  if(type === 1){
-    return <h1>this is h1</h1>
+// 二、类组件
+// 创建
+class HelloCOmponent extends React.Component {
+  // 事件回调函数(标准写法 避免this指向问题)
+  // 这样写 回调函数中的this指向的是当前的组件实例对象
+  clickHandler = () => {
+    console.log('类组件中的事件被触发了')
   }
-  if(type === 2){
-    return <h1>this is h2</h1>
-  }
-  if(type === 3){
-    return <h1>this is h3</h1>
+  render () {
+    return <div onClick={this.clickHandler}>this is class Component</div>
   }
 }
+// 渲染 <HelloCOmponent/> <HelloCOmponent></HelloCOmponent>
+// 约定说明
+// 1、类名称也必须以大写字母开头
+// 2、类组件应该继承React.Component父类，从而使用父类中提供的方法或属性
+// 3、类组件必须提供render方法，render方法必须有返回值，表示该组件的UI结构
 
-// 五、样式控制
-// 1、行内样式 - 在元素身上绑定一个style属性即可
-const style = {
-  color:'red',
-  fontSize:'30px'
-}
-// 2、类名样式 - 在元素身上绑定一个className属性即可
-// import './app.css'
-
-// 六、动态类名控制
-// 动态控制一下这个active类名 满足条件才有
-const activeFlag = true
-
-function App() {
+// 绑定事件
+// 1. 如何绑定事件
+// - 语法    
+//   on + 事件名称 = { 事件处理程序 } ，比如：`<div onClick={()=>{}}></div>`
+// - 注意点
+//   react事件采用驼峰命名法，比如：onMouseEnter、onFocus
+// 2.获取事件对象 e
+function App () {
   return (
-    <div className="App">
-        {/* 一、JSX中使用js表达式 */}
-        { name }
-        { getAge() }
-        { flag ? '真棒' : '真菜'}
-        {/* 二、JSX列表渲染 */}
-        { songs.map(song=><li key={song.id}>{song.name}</li>) }
-        {/* 三、条件渲染 */}
-        { flag2 ? (
-            <div>
-              <span>this is span</span>
-            </div>):null  }
+    <div>
+      {/* 渲染函数组件 */}
+      <Hello />
+      <Hello></Hello>
 
-        { true && <span>this is span</span> }
-
-        {/* 四、原则：模板中的逻辑尽量保持精简 */}
-        { getHtag(1) }
-        { getHtag(2) }
-        { getHtag(3) }
-
-        {/* 五、样式控制 */}
-        {/* 1、行内样式 */}
-        <span style={ {color:'red',fontSize:'30px'} }>this is red</span>
-        <span style={ style }>this is red</span>
-        {/* 2、类名样式 */}
-        <span className='active'>this is blue</span>
-
-        {/* 六、动态类名控制 */}
-        <span className={activeFlag ? 'active' : ''}>this is blue</span>
+      {/* 渲染类组件 */}
+      <HelloCOmponent />
+      <HelloCOmponent></HelloCOmponent>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
