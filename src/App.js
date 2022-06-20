@@ -1,29 +1,49 @@
-// 基础使用- 安装router
-// 安装react-router-dom
-// yarn add react-router-dom@6
+// props说明：知道props传递时的一些注意事项
+// 1、props是只读对象(readonly)
+// 根据单项数据流的要求，子组件只能读取props中的数据，不能进行修改
+// this.props.msg = 'new msg' //不可以 不可直接进行修改
 
-//引入两个组件
-import Home from "./Home"
-import About from "./About"
+// 2、props可以传递任意数据
+// 数字、字符串、布尔值、数组、对象、函数、JSX
 
-// 进行路由配置
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom"
-
-function App () {
+import React from "react"
+//函数式的Son
+function Son (props) {
+  // props是一个对象，里面存着通过父组件传入的所有数据
+  console.log(props)
   return (
-    // 声明当前要用一个非hash模式的路由
-    <BrowserRouter>
-      {/* 指定跳转的组件 to用来配置路由地址 */}
-      <Link to="/">首页</Link>
-      <Link to="/about">关于</Link>
-      {/* 路由出口 路由对应的组件会在这里进行渲染 */}
-      <Routes>
-        {/* 指定路径和组件的对应关系 path代表路径 element代表组件 成对出现 path - element */}
-        <Route path="/" element={<Home />}></Route>
-        <Route path="about" element={<About />}></Route>
-      </Routes>
-    </BrowserRouter>
+    <div>我是函数子组件，
+      {props.list.map(item => <p key={item}>{item}</p>)}
+      {props.useInfo.name}
+      <button onClick={props.getMes}>触发父组件传入的函数</button>
+      {props.child}
+    </div >
   )
+}
+class App extends React.Component {
+  //准备数据
+  state = {
+    list: [1, 2, 3],
+    useInfo: {
+      name: 'cp',
+      age: 30
+    }
+  }
+  getMes = () => {
+    console.log('父组件中的函数')
+  }
+  render () {
+    return (
+      <div>
+        {/* 子组件身上绑定属性，属性名可以自定义 保持语义化 */}
+        <Son
+          list={this.state.list}
+          useInfo={this.state.useInfo}
+          getMes={this.getMes}
+          child={<span>this is span</span>} />
+      </div>
+    )
+  }
 }
 
 export default App
